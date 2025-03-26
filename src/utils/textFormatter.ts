@@ -117,3 +117,5 @@ export const formatText = {
   countCharacters: (text: string) => text.length,
   countLines: (text: string) => text.split("\n").length,
 };
+
+// ???
