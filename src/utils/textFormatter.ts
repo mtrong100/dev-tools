@@ -81,25 +81,29 @@ export const formatText = {
     text.replace(
       /[&<>"']/g,
       (char) =>
-        ({
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          '"': "&quot;",
-          "'": "&#39;",
-        }[char])
+        ((
+          {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;",
+          } as { [key: string]: string }
+        )[char])
     ),
   unescapeHtml: (text: string) =>
     text.replace(
       /&amp;|&lt;|&gt;|&quot;|&#39;/g,
       (char) =>
-        ({
-          "&amp;": "&",
-          "&lt;": "<",
-          "&gt;": ">",
-          "&quot;": '"',
-          "&#39;": "'",
-        }[char])
+        ((
+          {
+            "&amp;": "&",
+            "&lt;": "<",
+            "&gt;": ">",
+            "&quot;": '"',
+            "&#39;": "'",
+          } as { [key: string]: string }
+        )[char])
     ),
 
   // Text generation
