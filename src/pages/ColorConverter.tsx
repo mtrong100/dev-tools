@@ -29,16 +29,25 @@ export function ColorConverter() {
   }, [recentColors]);
 
   const addToRecent = (color: string, format: ColorFormat) => {
-    setRecentColors(prev => {
-      const updated = [{ value: color, format }, ...prev.filter(c => c.value !== color)].slice(0, 10);
+    setRecentColors((prev) => {
+      const updated = [
+        { value: color, format },
+        ...prev.filter((c) => c.value !== color),
+      ].slice(0, 10);
       return updated;
     });
   };
 
-  const convertColor = (inputColor: string = input, inputFormat: ColorFormat = selectedFormat) => {
+  const convertColor = (
+    inputColor: string = input,
+    inputFormat: ColorFormat = selectedFormat
+  ) => {
     try {
       setError("");
-      let r = 0, g = 0, b = 0, a = alpha;
+      let r = 0,
+        g = 0,
+        b = 0,
+        a = alpha;
 
       // Parse input color to RGBA
       if (inputFormat === "hex") {
@@ -50,15 +59,19 @@ export function ColorConverter() {
           a = parseInt(hex.substring(6, 8), 16) / 255;
         }
       } else if (inputFormat === "rgb" || inputFormat === "rgba") {
-        const match = inputColor.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)$/);
+        const match = inputColor.match(
+          /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)$/
+        );
         if (!match) throw new Error("Invalid RGB(A) format");
         [, r, g, b, a = "1"] = match.map(Number);
       } else if (inputFormat === "hsl" || inputFormat === "hsla") {
-        const match = inputColor.match(/^hsla?\((\d+),\s*(\d+)%,\s*(\d+)%(?:,\s*([\d.]+))?\)$/);
+        const match = inputColor.match(
+          /^hsla?\((\d+),\s*(\d+)%,\s*(\d+)%(?:,\s*([\d.]+))?\)$/
+        );
         if (!match) throw new Error("Invalid HSL(A) format");
         const [, h, s, l, alpha = "1"] = match.map(Number);
         a = Number(alpha);
-        
+
         // Convert HSL to RGB
         const hue = h / 360;
         const sat = s / 100;
@@ -69,26 +82,34 @@ export function ColorConverter() {
         } else {
           const q = light < 0.5 ? light * (1 + sat) : light + sat - light * sat;
           const p = 2 * light - q;
-          r = Math.round(hueToRgb(p, q, hue + 1/3) * 255);
+          r = Math.round(hueToRgb(p, q, hue + 1 / 3) * 255);
           g = Math.round(hueToRgb(p, q, hue) * 255);
-          b = Math.round(hueToRgb(p, q, hue - 1/3) * 255);
+          b = Math.round(hueToRgb(p, q, hue - 1 / 3) * 255);
         }
       } else if (inputFormat === "cmyk") {
-        const match = inputColor.match(/^cmyk\((\d+)%,\s*(\d+)%,\s*(\d+)%,\s*(\d+)%\)$/);
+        const match = inputColor.match(
+          /^cmyk\((\d+)%,\s*(\d+)%,\s*(\d+)%,\s*(\d+)%\)$/
+        );
         if (!match) throw new Error("Invalid CMYK format");
         const [, c, m, y, k] = match.map(Number);
-        
+
         // Convert CMYK to RGB
-        r = Math.round(255 * (1 - c/100) * (1 - k/100));
-        g = Math.round(255 * (1 - m/100) * (1 - k/100));
-        b = Math.round(255 * (1 - y/100) * (1 - k/100));
+        r = Math.round(255 * (1 - c / 100) * (1 - k / 100));
+        g = Math.round(255 * (1 - m / 100) * (1 - k / 100));
+        b = Math.round(255 * (1 - y / 100) * (1 - k / 100));
       }
 
       // Convert RGB(A) to all formats
-      const hex = `#${[r, g, b].map(x => x.toString(16).padStart(2, "0")).join("")}${
-        a < 1 ? Math.round(a * 255).toString(16).padStart(2, "0") : ""
+      const hex = `#${[r, g, b]
+        .map((x) => x.toString(16).padStart(2, "0"))
+        .join("")}${
+        a < 1
+          ? Math.round(a * 255)
+              .toString(16)
+              .padStart(2, "0")
+          : ""
       }`;
-      
+
       const rgb = `rgb(${r}, ${g}, ${b})`;
       const rgba = `rgba(${r}, ${g}, ${b}, ${a})`;
 
@@ -98,7 +119,9 @@ export function ColorConverter() {
       const bb = b / 255;
       const max = Math.max(rr, gg, bb);
       const min = Math.min(rr, gg, bb);
-      let h = 0, s = 0, l = (max + min) / 2;
+      let h = 0,
+        s = 0,
+        l = (max + min) / 2;
 
       if (max !== min) {
         const d = max - min;
@@ -109,20 +132,30 @@ export function ColorConverter() {
         h *= 60;
       }
 
-      const hsl = `hsl(${Math.round(h)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%)`;
-      const hsla = `hsla(${Math.round(h)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%, ${a})`;
+      const hsl = `hsl(${Math.round(h)}, ${Math.round(s * 100)}%, ${Math.round(
+        l * 100
+      )}%)`;
+      const hsla = `hsla(${Math.round(h)}, ${Math.round(
+        s * 100
+      )}%, ${Math.round(l * 100)}%, ${a})`;
 
       // Convert to CMYK
       const k = 1 - Math.max(rr, gg, bb);
-      const c = (1 - rr - k) / (1 - k) * 100;
-      const m = (1 - gg - k) / (1 - k) * 100;
-      const y = (1 - bb - k) / (1 - k) * 100;
-      const cmyk = `cmyk(${Math.round(c)}%, ${Math.round(m)}%, ${Math.round(y)}%, ${Math.round(k * 100)}%)`;
+      const c = ((1 - rr - k) / (1 - k)) * 100;
+      const m = ((1 - gg - k) / (1 - k)) * 100;
+      const y = ((1 - bb - k) / (1 - k)) * 100;
+      const cmyk = `cmyk(${Math.round(c)}%, ${Math.round(m)}%, ${Math.round(
+        y
+      )}%, ${Math.round(k * 100)}%)`;
 
       setOutput({ hex, rgb, rgba, hsl, hsla, cmyk });
       addToRecent(inputColor, inputFormat);
-    } catch (error) {
-      setError("Invalid color format");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("Invalid color format");
+      }
       setOutput({
         hex: "",
         rgb: "",
@@ -143,7 +176,7 @@ export function ColorConverter() {
     try {
       await navigator.clipboard.writeText(text);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      console.error("Failed to copy:", err);
     }
   };
 
@@ -170,9 +203,11 @@ export function ColorConverter() {
     const data = {
       color: input,
       format: selectedFormat,
-      conversions: output
+      conversions: output,
     };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: "application/json",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -185,14 +220,19 @@ export function ColorConverter() {
 
   return (
     <div className="space-y-6">
-      <Card title="Color Converter" description="Convert colors between different formats">
+      <Card
+        title="Color Converter"
+        description="Convert colors between different formats"
+      >
         <div className="space-y-6">
           {/* Color Input Section */}
           <div className="space-y-4">
             <div className="flex flex-wrap gap-4">
               <select
                 value={selectedFormat}
-                onChange={(e) => setSelectedFormat(e.target.value as ColorFormat)}
+                onChange={(e) =>
+                  setSelectedFormat(e.target.value as ColorFormat)
+                }
                 className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm"
               >
                 <option value="hex">HEX</option>
@@ -234,9 +274,7 @@ export function ColorConverter() {
                 placeholder={`Enter ${selectedFormat.toUpperCase()} color value`}
                 className={error ? "border-red-500" : ""}
               />
-              {error && (
-                <p className="text-sm text-red-500">{error}</p>
-              )}
+              {error && <p className="text-sm text-red-500">{error}</p>}
             </div>
           </div>
 
@@ -252,22 +290,30 @@ export function ColorConverter() {
 
           {/* Conversion Results */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {Object.entries(output).map(([format, value]) => value && (
-              <div key={format} className="flex items-center justify-between p-2 rounded-md bg-gray-50 dark:bg-gray-800">
-                <span className="text-sm font-medium">{format.toUpperCase()}:</span>
-                <div className="flex items-center gap-2">
-                  <code className="text-sm">{value}</code>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => copyToClipboard(value)}
-                    className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"
+            {Object.entries(output).map(
+              ([format, value]) =>
+                value && (
+                  <div
+                    key={format}
+                    className="flex items-center justify-between p-2 rounded-md bg-gray-50 dark:bg-gray-800"
                   >
-                    Copy
-                  </Button>
-                </div>
-              </div>
-            ))}
+                    <span className="text-sm font-medium">
+                      {format.toUpperCase()}:
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <code className="text-sm">{value}</code>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => copyToClipboard(value)}
+                        className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"
+                      >
+                        Copy
+                      </Button>
+                    </div>
+                  </div>
+                )
+            )}
           </div>
 
           {/* Recent Colors */}
@@ -328,8 +374,8 @@ export function ColorConverter() {
 function hueToRgb(p: number, q: number, t: number) {
   if (t < 0) t += 1;
   if (t > 1) t -= 1;
-  if (t < 1/6) return p + (q - p) * 6 * t;
-  if (t < 1/2) return q;
-  if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+  if (t < 1 / 6) return p + (q - p) * 6 * t;
+  if (t < 1 / 2) return q;
+  if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
   return p;
 }

@@ -201,10 +201,12 @@ export function LetterProfile() {
       if (file && file.type === "text/csv") {
         const reader = new FileReader();
         reader.onload = (e) => {
-          const text = e.target?.result as string;
-          const names = text.split("\n")[0].trim(); // Read first line
-          setFullName(names);
-          generateInitials(names);
+          if (e.target?.result) {
+            const text = e.target.result.toString();
+            const names = text.split("\n")[0].trim();
+            setFullName(names);
+            generateInitials(names);
+          }
         };
         reader.readAsText(file);
       }
