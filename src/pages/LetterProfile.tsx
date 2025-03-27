@@ -41,7 +41,7 @@ export function LetterProfile() {
   const [textColor, setTextColor] = useState("#FFFFFF");
   const [size, setSize] = useState(256);
   const [fontFamily, setFontFamily] = useState(fontFamilies[0]);
-  const [fontSize, setFontSize] = useState(0.5); // Relative to canvas size
+  const [fontSize] = useState(0.5); // Relative to canvas size
   const [shape, setShape] = useState<"circle" | "square" | "rounded">("circle");
   const [isDragging, setIsDragging] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);

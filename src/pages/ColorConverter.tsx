@@ -63,7 +63,11 @@ export function ColorConverter() {
           /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)$/
         );
         if (!match) throw new Error("Invalid RGB(A) format");
-        [, r, g, b, a = "1"] = match.map(Number);
+        const [, rStr, gStr, bStr, aStr = "1"] = match;
+        r = Number(rStr);
+        g = Number(gStr); 
+        b = Number(bStr);
+        a = Number(aStr);
       } else if (inputFormat === "hsl" || inputFormat === "hsla") {
         const match = inputColor.match(
           /^hsla?\((\d+),\s*(\d+)%,\s*(\d+)%(?:,\s*([\d.]+))?\)$/
@@ -193,8 +197,9 @@ export function ColorConverter() {
               convertColor(colors.color, colors.format || "hex");
             }
           }
-        } catch (err) {
+        } catch (error) {
           setError("Invalid JSON file");
+          console.log(error)
         }
       };
       reader.readAsText(file);
