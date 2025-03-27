@@ -119,9 +119,9 @@ export function ColorConverter() {
       const bb = b / 255;
       const max = Math.max(rr, gg, bb);
       const min = Math.min(rr, gg, bb);
-      let h = 0,
-        s = 0,
-        l = (max + min) / 2;
+      let h = 0;
+      let s = 0;
+      const l = (max + min) / 2;
 
       if (max !== min) {
         const d = max - min;
@@ -184,12 +184,14 @@ export function ColorConverter() {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = (e: ProgressEvent<FileReader>) => {
         try {
-          const colors = JSON.parse(e.target?.result as string);
-          if (colors.color) {
-            setInput(colors.color);
-            convertColor(colors.color, colors.format || "hex");
+          if (typeof e.target?.result === "string") {
+            const colors = JSON.parse(e.target.result);
+            if (colors.color) {
+              setInput(colors.color);
+              convertColor(colors.color, colors.format || "hex");
+            }
           }
         } catch (err) {
           setError("Invalid JSON file");
@@ -371,7 +373,7 @@ export function ColorConverter() {
 }
 
 // Helper function for HSL conversion
-function hueToRgb(p: number, q: number, t: number) {
+function hueToRgb(p: number, q: number, t: number): number {
   if (t < 0) t += 1;
   if (t > 1) t -= 1;
   if (t < 1 / 6) return p + (q - p) * 6 * t;
