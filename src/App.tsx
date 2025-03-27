@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeContext";
+import { Toaster } from 'react-hot-toast';
 
 // Tool imports
 import { CaseConverter } from "./pages/CaseConverter";
@@ -17,6 +18,7 @@ import { DashboardLayout } from "./layouts/DashboardLayout";
 function App() {
   return (
     <ThemeProvider>
+      <Toaster position="bottom-right" />
       <Router>
         <Routes>
           <Route element={<DashboardLayout />}>

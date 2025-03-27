@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Card } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
 import { Textarea } from "../components/ui/Textarea";
+import { toast } from "react-hot-toast";
 
 interface PasswordOptions {
   length: number;
@@ -182,8 +183,10 @@ export function PasswordGenerator() {
   const copyToClipboard = async (text: string = password) => {
     try {
       await navigator.clipboard.writeText(text);
+      toast.success("Password copied to clipboard!");
     } catch (err) {
       console.error("Failed to copy password to clipboard:", err);
+      toast.error("Failed to copy password");
     }
   };
 

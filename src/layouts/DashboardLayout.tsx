@@ -15,6 +15,11 @@ import {
 const tools = [
   { name: "Case Converter", path: "/case-converter", icon: DocumentTextIcon },
   {
+    name: "Password Generator",
+    path: "/password-generator",
+    icon: ArrowPathIcon,
+  },
+  {
     name: "Text Formatter",
     path: "/text-formatter",
     icon: DocumentDuplicateIcon,
@@ -29,11 +34,6 @@ const tools = [
   { name: "Color Converter", path: "/color-converter", icon: SwatchIcon },
   { name: "JSON Formatter", path: "/json-formatter", icon: CodeBracketIcon },
   { name: "UUID Generator", path: "/uuid-generator", icon: KeyIcon },
-  {
-    name: "Password Generator",
-    path: "/password-generator",
-    icon: ArrowPathIcon,
-  },
 ];
 
 export function DashboardLayout() {
